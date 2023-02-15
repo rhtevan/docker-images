@@ -51,8 +51,8 @@ checksumPackages() {
 
 # Check container runtime
 checkContainerRuntime() {
-  CONTAINER_RUNTIME=$(which docker 2>/dev/null) ||
-    CONTAINER_RUNTIME=$(which podman 2>/dev/null) ||
+  CONTAINER_RUNTIME=$(which podman 2>/dev/null) ||
+    CONTAINER_RUNTIME=$(which docker 2>/dev/null) ||
     {
       echo "No docker or podman executable found in your PATH"
       exit 1
