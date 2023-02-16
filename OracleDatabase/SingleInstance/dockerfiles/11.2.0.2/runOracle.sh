@@ -163,6 +163,9 @@ EOF"
 # Set SIGTERM handler
 trap _term SIGTERM
 
+# Fixing file ownership
+chown -R oracle:dba $ORACLE_BASE/oradata
+
 # Check whether database already exists
 if [ -d $ORACLE_BASE/oradata/$ORACLE_SID ]; then
    symLinkFiles;
