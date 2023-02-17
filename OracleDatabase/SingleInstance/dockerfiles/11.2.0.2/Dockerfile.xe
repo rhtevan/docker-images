@@ -95,4 +95,8 @@ RUN chown oracle:dba $ORACLE_BASE/scripts/setup/$DEBEZIUM_FILE && \
 #HEALTHCHECK --interval=1m --start-period=5m \
 #   CMD "$ORACLE_BASE/$CHECK_DB_FILE" >/dev/null || exit 1
 
+ENV ORACLE_PWD=mypass
+USER root
+EXPOSE 1521 8080
+
 CMD exec $ORACLE_BASE/$RUN_FILE
