@@ -9,7 +9,7 @@ items:
     annotations:
       alpha.image.policy.openshift.io/resolve-names: '*'
       app.openshift.io/route-disabled: "false"
-      image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"oracle11g:11.2.0.2-xe.debezium","namespace":"source"},"fieldPath":"spec.template.spec.containers[?(@.name==\"oracle11g\")].image","pause":"false"}]'
+      image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"oracle11g:11.2.0.2-xe.debezium","namespace":"debezium"},"fieldPath":"spec.template.spec.containers[?(@.name==\"oracle11g\")].image","pause":"false"}]'
       openshift.io/generated-by: OpenShiftWebConsole
     labels:
       app: oracle11g
@@ -17,8 +17,9 @@ items:
       app.kubernetes.io/instance: oracle11g
       app.kubernetes.io/name: oracle11g
       app.kubernetes.io/part-of: data-source
-      app.openshift.io/runtime-namespace: source
+      app.openshift.io/runtime-namespace: debezium
     name: oracle11g
+    namespace: debezium
   spec:
     progressDeadlineSeconds: 600
     replicas: 1
@@ -41,7 +42,7 @@ items:
         - env:
           - name: ORACLE_PWD
             value: mypass
-          image: image-registry.openshift-image-registry.svc:5000/source/oracle11g@sha256:f9ba925bdd122f6970f62d626a75b3a261de0edf52cb2fc15ad953fa6072f93b
+          image: image-registry.openshift-image-registry.svc:5000/debezium/oracle11g@sha256:f9ba925bdd122f6970f62d626a75b3a261de0edf52cb2fc15ad953fa6072f93b
           imagePullPolicy: IfNotPresent
           name: oracle11g
           ports:
@@ -84,6 +85,7 @@ items:
       app.kubernetes.io/part-of: data-source
       app.openshift.io/runtime-version: 11.2.0.2-xe.debezium
     name: oracle11g
+    namespace: debezium
   spec:
     ports:
     - name: 1521-tcp
@@ -104,6 +106,7 @@ items:
       app.kubernetes.io/name: oracle11g
       app.kubernetes.io/part-of: data-source
     name: oracle11g
+    namespace: debezium
   spec:
     lookupPolicy:
       local: false
@@ -118,3 +121,28 @@ items:
       name: 11.2.0.2-xe.debezium
       referencePolicy:
         type: Local
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: system:openshift:scc:privileged
+    namespace: debezium
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: system:openshift:scc:privileged
+  subjects:
+  - kind: ServiceAccount
+    name: default
+- kind: PersistentVolumeClaim
+  apiVersion: v1
+  metadata:
+    name: oradata-pvc
+    namespace: debezium
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+    volumeMode: Filesystem
+

@@ -1,0 +1,20 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  labels:
+    strimzi.io/cluster: dbz-kafka-connect-cluster
+  name: 11g-connector-oracle
+spec:
+  class: "io.debezium.connector.oracle.OracleConnector"
+  tasksMax: 1
+  config:
+    database.history.kafka.bootstrap.servers: "dbz-cluster-kafka-bootstrap:9093"
+    database.history.kafka.topic: "schema-changes"
+    database.hostname: "oracle11g"
+    database.port: 1521
+    database.user: "dbzuser"
+    database.password: "dbz"
+    database.dbname: "XE"
+    database.server.name: "oracle11g"
+    database.include.list: "DBZUSER.CUSTOMERS,HR.EMPLOYEES"
+
