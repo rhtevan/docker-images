@@ -10,7 +10,6 @@ items:
       alpha.image.policy.openshift.io/resolve-names: '*'
       app.openshift.io/route-disabled: "false"
       image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"oracle11g:11.2.0.2-xe.debezium","namespace":"debezium"},"fieldPath":"spec.template.spec.containers[?(@.name==\"oracle11g\")].image","pause":"false"}]'
-      openshift.io/generated-by: OpenShiftWebConsole
     labels:
       app: oracle11g
       app.kubernetes.io/component: oracle11g
