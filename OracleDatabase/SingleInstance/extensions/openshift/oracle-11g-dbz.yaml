@@ -120,18 +120,6 @@ items:
       name: 11.2.0.2-xe.debezium
       referencePolicy:
         type: Local
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: RoleBinding
-  metadata:
-    name: system:openshift:scc:privileged
-    namespace: debezium
-  roleRef:
-    apiGroup: rbac.authorization.k8s.io
-    kind: ClusterRole
-    name: system:openshift:scc:privileged
-  subjects:
-  - kind: ServiceAccount
-    name: default
 - kind: PersistentVolumeClaim
   apiVersion: v1
   metadata:

@@ -1,0 +1,111 @@
+apiVersion: v1
+kind: List
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      alpha.image.policy.openshift.io/resolve-names: '*'
+      app.openshift.io/route-disabled: "false"
+      image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"postgres:14","namespace":"debezium"},"fieldPath":"spec.template.spec.containers[?(@.name==\"postgres\")].image","pause":"false"}]'
+    labels:
+      app: postgres
+      app.kubernetes.io/component: postgres
+      app.kubernetes.io/instance: postgres
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/part-of: data-sink
+      app.openshift.io/runtime: postgresql
+      app.openshift.io/runtime-namespace: debezium
+    name: postgres
+    namespace: debezium
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: postgres
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftWebConsole
+        creationTimestamp: null
+        labels:
+          app: postgres
+          deployment: postgres
+      spec:
+        containers:
+        - env:
+          - name: POSTGRES_USER
+            value: dbzuser
+          - name: POSTGRES_PASSWORD
+            value: dbz
+          - name: POSTGRES_DB
+            value: debezium
+          image: image-registry.openshift-image-registry.svc:5000/debezium/postgres@sha256:7c39500f9f1984695b64f61759cfb93eca2e950e0a2a214e1dd162e5f1fa57b4
+          imagePullPolicy: IfNotPresent
+          name: postgres
+          ports:
+          - containerPort: 5432
+            protocol: TCP
+          resources: {}
+          securityContext:
+            runAsUser: 0
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: postgres
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: postgres
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: postgres-pvc
+    namespace: debezium
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    volumeMode: Filesystem
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: postgres
+      app.kubernetes.io/component: postgres
+      app.kubernetes.io/instance: postgres
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/part-of: data-sink
+    name: postgres
+    namespace: debezium
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/generated-by: OpenShiftWebConsole
+        openshift.io/imported-from: quay.io/debezium/postgres:14
+      from:
+        kind: DockerImage
+        name: quay.io/debezium/postgres:14
+      generation: 2
+      importPolicy:
+        importMode: Legacy
+      name: "14"
+      referencePolicy:
+        type: Local
