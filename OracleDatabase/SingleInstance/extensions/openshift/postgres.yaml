@@ -109,3 +109,25 @@ items:
       name: "14"
       referencePolicy:
         type: Local
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: postgres
+      app.kubernetes.io/component: postgres
+      app.kubernetes.io/instance: postgres
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/part-of: data-sink
+      app.openshift.io/runtime: postgresql
+      app.openshift.io/runtime-namespace: debezium
+    name: postgres
+    namespace: debezium
+  spec:
+    ports:
+    - port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      app: postgres
+    sessionAffinity: None
+    type: ClusterIP

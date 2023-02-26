@@ -16,5 +16,6 @@ spec:
     database.password: "dbz"
     database.dbname: "XE"
     database.server.name: "oracle11g"
+    schema.include.list: "DBZUSER"
     table.include.list: "DBZUSER.CUSTOMERS"
 

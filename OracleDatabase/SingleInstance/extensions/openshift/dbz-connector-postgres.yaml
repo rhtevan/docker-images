@@ -1,0 +1,22 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  labels:
+    strimzi.io/cluster: dbz-kafka-connect-cluster
+  name: connector-postgres
+spec:
+  class: "io.confluent.connect.jdbc.JdbcSinkConnector"
+  tasksMax: 1
+  config:
+    topics: "oracle11g.DBZUSER.CUSTOMERS"
+    connection.url: "jdbc:postgresql://postgres:5432/debezium?user=dbzuser&password=dbz"
+    transforms: "unwrap"
+    transforms.unwrap.type: "io.debezium.transforms.ExtractNewRecordState"
+    transforms.unwrap.drop.tombstones: "false"
+    auto.create: "true"
+    insert.mode: "upsert"
+    delete.enabled: "true"
+    table.name.format: "CUSTOMERS"
+    pk.fields: "ID"
+    pk.mode: "record_key"
+
