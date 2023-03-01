@@ -32,9 +32,6 @@ items:
       type: RollingUpdate
     template:
       metadata:
-        annotations:
-          openshift.io/generated-by: OpenShiftWebConsole
-        creationTimestamp: null
         labels:
           app: postgres
           deployment: postgres
@@ -47,41 +44,20 @@ items:
             value: dbz
           - name: POSTGRES_DB
             value: debezium
-          image: image-registry.openshift-image-registry.svc:5000/debezium/postgres@sha256:7c39500f9f1984695b64f61759cfb93eca2e950e0a2a214e1dd162e5f1fa57b4
+          image: image-registry.openshift-image-registry.svc:5000/debezium/postgres
           imagePullPolicy: IfNotPresent
           name: postgres
           ports:
           - containerPort: 5432
             protocol: TCP
-          resources: {}
           securityContext:
             runAsUser: 0
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
-          volumeMounts:
-          - mountPath: /var/lib/postgresql/data
-            name: postgres
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
-        securityContext: {}
         terminationGracePeriodSeconds: 30
-        volumes:
-        - name: postgres
-          persistentVolumeClaim:
-            claimName: postgres-pvc
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    name: postgres-pvc
-    namespace: debezium
-  spec:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 1Gi
-    volumeMode: Filesystem
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
@@ -98,7 +74,6 @@ items:
       local: false
     tags:
     - annotations:
-        openshift.io/generated-by: OpenShiftWebConsole
         openshift.io/imported-from: quay.io/debezium/postgres:14
       from:
         kind: DockerImage

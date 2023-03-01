@@ -118,7 +118,6 @@ items:
     name: kafdrop
     namespace: debezium
   spec:
-    host: kafdrop-debezium.apps-crc.testing
     port:
       targetPort: 9000-tcp
     tls:
