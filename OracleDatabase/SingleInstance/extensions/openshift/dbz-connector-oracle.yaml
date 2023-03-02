@@ -19,6 +19,25 @@ spec:
     database.password: "dbz"
     database.dbname: "XE"
     database.server.name: "oracle11g"
+
+    ##########################################################################################################
+    # The default for all Debezium connectors is to store DDL for all tables regardless of where they reside #
+    # unless set the following                                                                               #
+    ##########################################################################################################
+    database.history.store.only.captured.tables.ddl: true
+
     schema.include.list: "DBZUSER"
     table.include.list: "DBZUSER.CUSTOMERS"
 
+    ##########################################################################################################
+    # redo_log_catalog:: Writes the data dictionary to the online redo logs causing more archive logs to be  #
+    #                    generated over time. This also enables tracking DDL changes against captured tables,#
+    #                    so if the schema changes frequently this is the ideal choice.                       #
+    # online_catalog:: Uses the database’s current data dictionary to resolve object ids and does not write  #
+    #                  any extra information to the online redo logs. This allows LogMiner to mine           #
+    #                  substantially faster but at the expense that DDL changes cannot be tracked.           #
+    #                  If the captured table(s) schema changes infrequently or never, this is the ideal      #
+    #                  choice.                                                                               #
+    # https://github.com/debezium/oracle-vagrant-box/blob/main/REDOLOG_SETUP.md                              #
+    ##########################################################################################################
+    log.mining.strategy: "online_catalog"
