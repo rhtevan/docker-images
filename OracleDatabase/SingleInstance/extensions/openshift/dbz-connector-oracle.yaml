@@ -6,7 +6,10 @@ metadata:
   name: connector-oracle11g
 spec:
   class: "io.debezium.connector.oracle.OracleConnector"
-  tasksMax: 1
+  ########################################################################################
+  # The Oracle connector always uses a single task and therefore does not use this value #
+  # tasksMax: 1                                                                          #
+  ########################################################################################
   config:
     database.history.kafka.bootstrap.servers: "dbz-cluster-kafka-bootstrap:9092"
     database.history.kafka.topic: "schema-changes.oracle11g"

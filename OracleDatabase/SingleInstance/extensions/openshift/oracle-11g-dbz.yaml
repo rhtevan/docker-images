@@ -130,6 +130,6 @@ items:
     - ReadWriteOnce
     resources:
       requests:
-        storage: 10Gi
+        storage: 50Gi
     volumeMode: Filesystem
 
