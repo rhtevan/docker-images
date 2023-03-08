@@ -3,7 +3,14 @@ kind: KafkaConnector
 metadata:
   labels:
     strimzi.io/cluster: dbz-kafka-connect-cluster
-  name: connector-postgres
+  
+  # Due to the ephemral nature of the sink target Postgres database,
+  # this sink connector need to be re-created for every new postgres pod.
+  # To allow setting the consumer group offset to the beginning of the topic,
+  # one of the solution is to a connector with an unique name.
+  # As a result, use 'oc create -f dbz-connector-postgres.yaml' command instead of
+  # 'oc apply -f' 
+  generateName: connector-postgres-
 spec:
   class: "io.confluent.connect.jdbc.JdbcSinkConnector"
   tasksMax: 1
